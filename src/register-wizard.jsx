@@ -46,7 +46,7 @@ export default class RegisterWizard extends React.Component {
             <div className="App">
                 <PageHeader
                     style={{
-                        border: '1px solid rgb(235, 237, 240)',
+                        border: '0px',
                     }}
                     onBack={() => {
                         window.history.go(-1);
@@ -69,8 +69,22 @@ export default class RegisterWizard extends React.Component {
                     </Form.Item>
                     <Form.Item>
                         <Checkbox onChange={(e) => { this.setState({ agreeable: e.target.checked }) }}>
-                            已阅读 <a href="./#" target="_self">叮云科技一站通许可条款</a> ，继续注册即表示接受此政策
+                            同意&nbsp;<a href="./#" target="_self">叮云科技一站通许可条款</a>
                         </Checkbox>
+                    </Form.Item>
+                    <Form.Item>
+                        <ul style={{
+                            color: '#666',
+                            fontSize: '10px',
+                            listStyle: 'square',
+                            marginBottom: '0px',
+                            padding: '0px'
+                        }}>
+                            <li style={{listStyle: 'none'}}>相关信息说明：</li>
+                            <li>已开通企业微信的用户首次登录企业微信即自动开通一站通，无需通过本系统重复注册</li>
+                            <li>本系统仅供未纳入企业微信管理的用户手动申请一站通，基于数据安全政策，此类用户只允许访问部分应用。后续可前往用户中心绑定企业微信开通完整权限</li>
+                            <li>您的注册行为将被系统记录，并由风控系统评估是否允许自助开户，如不满足自助开户条件，您的账户注册申请将进入人工审核队列，请通过审批中心查询账户申请进度</li>
+                        </ul>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" onClick={this.callBackend.bind(this)}>
@@ -78,7 +92,7 @@ export default class RegisterWizard extends React.Component {
                         </Button>
                         &nbsp;
                         <Button type="danger" htmlType="reset">
-                            重置表单
+                        重置表单
                         </Button>
                     </Form.Item>
                 </Form>
