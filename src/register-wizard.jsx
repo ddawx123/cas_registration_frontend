@@ -19,7 +19,8 @@ export default class RegisterWizard extends React.Component {
             password: '',
             re_password: '',
             cellphone: '',
-            agreeable: false
+            agreeable: false,
+            in_progress: false
         };
     }
     callBackend() {
@@ -29,8 +30,11 @@ export default class RegisterWizard extends React.Component {
             content: break_reason,
             okText: '好',
         });
-        console.log(this.state);
+        this.setState({ in_progress: true });
+        console.log('request:', this.state);
         RequestTool.post(atob('aHR0cHM6Ly9hcGkuZHNjaXRlY2guY29tL2NnaS1iaW4vcmVnaXN0ZXIuY2dp'), this.state).then((res) => {
+            console.log('response:', res);
+            this.setState({ in_progress: false });
             switch (res) {
                 case 'OK':
                     this.setState({
@@ -103,9 +107,13 @@ export default class RegisterWizard extends React.Component {
                     });
                     break;
             }
-            console.log(res);
         }).catch((e) => {
             console.log(e);
+            Modal.error({
+                title: '服务不可用',
+                content: '目前暂无法触达后端服务，请检查网络，如网络正常请稍后重试',
+                okText: '好',
+            });
         });
     }
     checkInput() {
@@ -167,7 +175,7 @@ export default class RegisterWizard extends React.Component {
                         </ul>
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" onClick={this.callBackend.bind(this)}>
+                        <Button type="primary" htmlType="submit" onClick={this.callBackend.bind(this)} loading={this.state.in_progress}>
                             立即注册
                         </Button>
                         &nbsp;
