@@ -9,6 +9,7 @@ import {
     Button,
     Modal
 } from 'antd';
+import { RequestTool } from "./utils/requestTool";
 
 export default class RegisterWizard extends React.Component {
     constructor(props) {
@@ -26,12 +27,91 @@ export default class RegisterWizard extends React.Component {
         if (break_reason !== '') return Modal.warning({
             title: '表单校验失败',
             content: break_reason,
+            okText: '好',
         });
         console.log(this.state);
+        RequestTool.post(atob('aHR0cHM6Ly9hcGkuZHNjaXRlY2guY29tL2NnaS1iaW4vcmVnaXN0ZXIuY2dp'), this.state).then((res) => {
+            switch (res) {
+                case 'OK':
+                    this.setState({
+                        username: '',
+                        password: '',
+                        re_password: '',
+                        cellphone: '',
+                        agreeable: false
+                    });
+                    Modal.success({
+                        title: '注册成功',
+                        content: '账户注册成功，欢迎加入叮云科技一站通！请注意，我们的后台风控机制仍将审核此次注册是否合规，若系统判定账户存在风险，可能临时锁定您的账户并需您配合进行二次实人认证',
+                        okText: '好',
+                        onOk: args => {
+                            window.history.go(-1);
+                        }
+                    });
+                    break;
+                case 'IllegalRequest':
+                    this.setState({
+                        username: '',
+                        password: '',
+                        re_password: '',
+                        cellphone: ''
+                    });
+                    Modal.warning({
+                        title: '注册操作受限',
+                        content: '平台前后端正在升级，建议稍后重试',
+                        okText: '好',
+                    });
+                    break;
+                case 'InvalidRequest':
+                    this.setState({
+                        username: '',
+                        password: '',
+                        re_password: '',
+                        cellphone: ''
+                    });
+                    Modal.info({
+                        title: '注册操作受限',
+                        content: '缺少必要表单字段，如持续出现此提示，可能系平台前后端正在升级，建议稍后重试',
+                        okText: '好',
+                    });
+                    break;
+                case 'UserAlreadyExists':
+                    Modal.warning({
+                        title: '注册操作受限',
+                        content: '当前输入的用户名或手机号已被其他用户使用，建议更换其他再次尝试。若手机号为您本人所属，可能该手机号为运营商二次放号，请前往账户服务中心提供相关证明信息后由后台工作人员为您审核开户！',
+                        okText: '好',
+                    });
+                    break;
+                case 'InternalNotAllowed':
+                    Modal.info({
+                        title: '注册操作受限',
+                        content: '当前指定的用户名为平台预留账户，不允许外部注册，请更换后再次尝试',
+                        okText: '好',
+                    });
+                    break;
+                default:
+                    this.setState({
+                        username: '',
+                        password: '',
+                        re_password: '',
+                        cellphone: ''
+                    });
+                    Modal.error({
+                        title: '用户注册服务异常',
+                        content: '用户注册服务后端异常，请稍后再尝试注册账户',
+                        okText: '好',
+                    });
+                    break;
+            }
+            console.log(res);
+        }).catch((e) => {
+            console.log(e);
+        });
     }
     checkInput() {
         if (this.state.username === '') return '请输入有效的用户名';
         if (this.state.password === '' || this.state.re_password === '') return '请输入密码';
+        if (this.state.password.length <= 6 || this.state.re_password.length <= 6) return '密码长度不符合复杂性要求，请输入7位及以上的密码';
         if (this.state.password !== this.state.re_password) return '确认密码输入不一致';
         if (this.state.cellphone.length !== 11) return '手机号长度不符合要求（目前仅支持中国大陆手机号）';
         if (!this.state.agreeable) return '请先接受许可条款';
@@ -56,19 +136,19 @@ export default class RegisterWizard extends React.Component {
                 />
                 <Form>
                     <Form.Item label="用户名">
-                        <Input onChange={(e) => { this.setState({ username: e.target.value }) }} />
+                        <Input onChange={(e) => { this.setState({ username: e.target.value }) }} value={this.state.username} />
                     </Form.Item>
                     <Form.Item label="新密码" hasFeedback>
-                        <Input.Password onChange={(e) => { this.setState({ password: e.target.value }) }} />
+                        <Input.Password onChange={(e) => { this.setState({ password: e.target.value }) }} value={this.state.password} />
                     </Form.Item>
                     <Form.Item label="确认密码" hasFeedback>
-                        <Input.Password onChange={(e) => { this.setState({ re_password: e.target.value }) }} />
+                        <Input.Password onChange={(e) => { this.setState({ re_password: e.target.value }) }} value={this.state.re_password} />
                     </Form.Item>
                     <Form.Item label="绑定手机号">
-                        <Input onChange={(e) => { this.setState({ cellphone: e.target.value }) }} />
+                        <Input onChange={(e) => { this.setState({ cellphone: e.target.value }) }} value={this.state.cellphone} />
                     </Form.Item>
                     <Form.Item>
-                        <Checkbox onChange={(e) => { this.setState({ agreeable: e.target.checked }) }}>
+                        <Checkbox onChange={(e) => { this.setState({ agreeable: e.target.checked }) }} checked={this.state.agreeable}>
                             同意&nbsp;<a href="./#" target="_self">叮云科技一站通许可条款</a>
                         </Checkbox>
                     </Form.Item>
