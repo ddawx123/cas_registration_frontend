@@ -94,6 +94,13 @@ export default class RegisterWizard extends React.Component {
                         okText: '好',
                     });
                     break;
+                case 'RegisterDisabled':
+                    Modal.warning({
+                        title: '注册操作受限',
+                        content: '平台自助注册通道目前处于关闭状态，此渠道无法继续操作，如需注册账号请联系站点管理员：system@dscitech.com',
+                        okText: '好',
+                    });
+                    break;
                 default:
                     this.setState({
                         username: '',
