@@ -4,6 +4,9 @@ import './index.css';
 import RegisterWizard from './register-wizard';
 import reportWebVitals from './reportWebVitals';
 
+import vCon from './utils/vConsole';
+window.con = vCon;
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.Fragment>

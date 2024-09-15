@@ -20,7 +20,8 @@ export default class RegisterWizard extends React.Component {
             re_password: '',
             cellphone: '',
             agreeable: false,
-            in_progress: false
+            in_progress: false,
+            debugger_entry_tries: 0
         };
     }
     callBackend() {
@@ -166,9 +167,17 @@ export default class RegisterWizard extends React.Component {
                             fontSize: '10px',
                             listStyle: 'square',
                             marginBottom: '0px',
-                            padding: '0px'
+                            padding: '0px',
+                            userSelect: 'none',
+                            msUserSelect: 'none'
                         }}>
-                            <li style={{listStyle: 'none'}}>相关信息说明：</li>
+                            <li style={{listStyle: 'none'}} onClick={() => {
+                                if (this.state.debugger_entry_tries >= 10) {
+                                    window.con.show();
+                                } else {
+                                    this.setState({ debugger_entry_tries: this.state.debugger_entry_tries + 1 });
+                                }
+                            }}>相关信息说明：</li>
                             <li>已开通企业微信的用户首次登录企业微信即自动开通一站通，无需通过本系统重复注册</li>
                             <li>本系统仅供未纳入企业微信管理的用户手动申请一站通，基于数据安全政策，此类用户只允许访问部分应用。后续可前往用户中心绑定企业微信开通完整权限</li>
                             <li>您的注册行为将被系统记录，并由风控系统评估是否允许自助开户，如不满足自助开户条件，您的账户注册申请将进入人工审核队列，请通过审批中心查询账户申请进度</li>
